@@ -1,0 +1,7 @@
+.leftBar {
+    background-color: #222222;
+    color: white;
+    height: calc(100vh - 88px);
+    border-width: 1px;
+    border-color: aqua;
+}

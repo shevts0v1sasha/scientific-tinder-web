@@ -1,0 +1,15 @@
+.leftBarButton {
+    width: 10vw;
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.leftBarButton-selected {
+    background-color: #343434;
+}
+
+.leftBarButton:hover {
+    background-color: #2a2a2a;
+}

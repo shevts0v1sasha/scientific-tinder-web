@@ -2,29 +2,20 @@ import React, {FC, useState} from 'react';
 import {Button, TextField} from "@mui/material";
 import '../registrationScreen.css';
 import {NavLink} from "react-router-dom";
+import {FormStringParam} from "../../../../types/ServiceTypes";
 
 interface IRegistrationComponentProps {
-    setName: (name: string) => void;
-    setSurname: (name: string) => void;
-    setPatronymic: (name: string) => void;
-    setSpeciality: (name: string) => void;
-    setJobTitle: (name: string) => void;
-    setAreaOfScientificInterests: (name: string) => void;
-    setAcademicTitle: (name: string) => void;
-    setAcademicDegree: (name: string) => void;
-    setLinksToQualifyingPapers: (name: string) => void;
-    setLinksToPublications: (name: string) => void;
-    setRole: (name: string) => void;
-    registration: () => boolean;
+    params: FormStringParam[];
+    registration: (errorHappened: boolean) => void;
 }
 
-const RegistrationComponent: FC<IRegistrationComponentProps> = (props) => {
+const RegistrationComponent: FC<IRegistrationComponentProps> = ({params, registration}) => {
 
-    const [error, setError] = useState<boolean>(false);
+    const errorHappened: boolean = params.findIndex(param => param.errorMessage !== null) > -1;
+    console.log('errorHappened: ' + errorHappened);
 
     const handleRegistrationButtonClicked = (): void => {
-        const result = props.registration();
-        setError(result);
+        registration(errorHappened);
     }
 
     return (
@@ -33,50 +24,21 @@ const RegistrationComponent: FC<IRegistrationComponentProps> = (props) => {
                 <h2>Регистрация</h2>
                 <div className="registration-table">
                     <table>
-                        <tr>
-                            <td>Имя</td>
-                            <td><TextField error={error} helperText={error ? 'Error' : ''} id="outlined-basic" label="Имя" variant="outlined"/></td>
-                        </tr>
-                        <tr>
-                            <td>Фамилия</td>
-                            <td><TextField id="outlined-basic" label="Фамилия" variant="outlined"/></td>
-                        </tr>
-                        <tr>
-                            <td>Отчество</td>
-                            <td><TextField id="outlined-basic" label="Отчество" variant="outlined"/></td>
-                        </tr>
-                        <tr>
-                            <td>Специальность</td>
-                            <td><TextField id="outlined-basic" label="Специальность" variant="outlined"/></td>
-                        </tr>
-                        <tr>
-                            <td>Должность</td>
-                            <td><TextField id="outlined-basic" label="Должность" variant="outlined"/></td>
-                        </tr>
-                        <tr>
-                            <td>Область научных интересов</td>
-                            <td><TextField id="outlined-basic" label="Область научных интересов" variant="outlined"/></td>
-                        </tr>
-                        <tr>
-                            <td>Ученое звание</td>
-                            <td><TextField id="outlined-basic" label="Ученое звание" variant="outlined"/></td>
-                        </tr>
-                        <tr>
-                            <td>Учёная степень</td>
-                            <td><TextField id="outlined-basic" label="Учёная степень" variant="outlined"/></td>
-                        </tr>
-                        <tr>
-                            <td>Ссылки на квалификационные работы</td>
-                            <td><TextField id="outlined-basic" label="Ссылки на квалификационные работы" variant="outlined"/></td>
-                        </tr>
-                        <tr>
-                            <td>Ссылки на публикации(При наличии)</td>
-                            <td><TextField id="outlined-basic" label="Ссылки на публикации" variant="outlined"/></td>
-                        </tr>
-                        <tr>
-                            <td>Роль (временно)</td>
-                            <td><TextField id="outlined-basic" label="Рольи" variant="outlined"/></td>
-                        </tr>
+                        {
+                            params.map(param => <tr>
+                                <td>{param.title}</td>
+                                <td>
+                                    <TextField
+                                        onChange={(evt) => param.onChange(evt.target.value)}
+                                        type={param.shouldBeHidden ? "password" : "text"}
+                                        error={param.errorMessage !== null}
+                                        helperText={param.errorMessage !== null ? param.errorMessage : ''}
+                                        id="outlined-basic"
+                                        label={param.title}
+                                        variant="outlined"/>
+                                </td>
+                            </tr>)
+                        }
                     </table>
                 </div>
                 <div className="registration-buttons-bar">

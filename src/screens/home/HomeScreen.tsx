@@ -1,8 +1,15 @@
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import './homeScreen.css';
 import {Button, TextField} from "@mui/material";
-import {NavLink} from "react-router-dom";
+import {Navigate, NavLink, Route, Routes} from "react-router-dom";
 import axios from "axios";
+import {User} from "../../types/UserTypes";
+import {Context} from "../../index";
+import {observer} from "mobx-react";
+import LeftBar from "../../components/leftBar/LeftBar";
+import CardsScreen from "../cards/CardsScreen";
+import ChatsScreen from "../chats/ChatsScreen";
+import ProfileScreen from "../profile/ProfileScreen";
 
 var stompClient = null;
 
@@ -44,28 +51,25 @@ const HomeScreen = () => {
     //     stompClient.send("/app/chat", {}, JSON.stringify(message));
     // }
 
+    const {rootStore} = useContext(Context);
+
+
     return (
-        <div id="home-container">
-            <div className="home-info-label">
-                Платформа для поиска единомышленников, научных руководителей, студентов для реализации научных проектов
+        <>
+            {(!rootStore.authStore.isAuth) && <Navigate to='/login'/>}
+            <div style={{display: "flex", width: '100%'}}>
+                <LeftBar/>
+                <main style={{flex: '1 1 33%'}}>
+                    <Routes>
+                        <Route path='/profile' element={<ProfileScreen/>}/>
+                        <Route path='/cards' element={<CardsScreen/>}/>
+                        <Route path='/chats' element={<ChatsScreen/>}/>
+                    </Routes>
+                </main>
             </div>
-            <div className="home-center-block">
-                <h2>Авторизация</h2>
-                <div className="withPadding">
-                    <TextField id="outlined-basic" label="Логин" variant="outlined"/>
-                </div>
-                <div className="withPadding">
-                    <TextField id="outlined-basic" label="Пароль" variant="outlined"/>
-                </div>
-                <div className="withPadding">
-                    <Button onClick={sendMessage} variant="contained">Войти</Button>
-                </div>
-                Ещё не зарегистрированы? <NavLink to="registration">Регистрация</NavLink>
+        </>
 
-            </div>
-
-        </div>
     );
 };
 
-export default HomeScreen;
+export default observer(HomeScreen);
